@@ -17,6 +17,25 @@ export class App extends Component {
     number: '',
   };
 
+  componentDidMount() {
+    const localStorageSavedContacts = localStorage.getItem('contactList');
+    const parsedContacts = JSON.parse(localStorageSavedContacts);
+
+    if(parsedContacts) {
+      this.setState({contacts: parsedContacts})
+    }
+  }
+
+  componentDidUpdate(prevState) {
+    const prevStateContacts = prevState.contacts;
+    const nexStateContacts = this.state.contacts;
+
+    if (prevStateContacts !== nexStateContacts) {
+      localStorage.setItem('contactList', JSON.stringify(nexStateContacts))
+    }
+
+  }
+
   handleSubmit = evt => {
     const id = nanoid();
     const name = evt.name;
@@ -74,7 +93,10 @@ export class App extends Component {
           Contacts
         </h2>
         <Filter filter={this.state.filter} handleChange={this.handleChange} />
-        <ContactList contacts={this.filteredContacts()} handleDelete={this.handleDelete} />
+        <ContactList
+          contacts={this.filteredContacts()}
+          handleDelete={this.handleDelete}
+        />
       </div>
     );
   }
